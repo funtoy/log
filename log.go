@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -39,13 +38,9 @@ var std = NewWithWriter(os.Stdout)
 
 type logger struct {
 	out            io.Writer
-	path           string
 	level          Level
 	jsonFormat     bool
 	noHighlighting bool
-	rotateByDay    bool
-	date           string
-	chOut          chan []byte
 }
 
 type message struct {
@@ -53,10 +48,6 @@ type message struct {
 	Time    string `json:"TIME"`
 	Dir     string `json:"DIR"`
 	Message string `json:"MSG"`
-}
-
-func newLogFileName(path string) string {
-	return time.Now().Format(path + ".2006.01.02.log")
 }
 
 func getHighlightColor(t string) string {
@@ -95,25 +86,8 @@ func New() *logger {
 }
 
 func NewWithWriter(out io.Writer) *logger {
-	l := &logger{out: out, chOut: make(chan []byte, 10000)}
-	go l.handling()
+	l := &logger{out: out}
 	return l
-}
-
-func NewWithFile(pathToFile string) *logger {
-	os.MkdirAll(filepath.Dir(pathToFile), 0755)
-	f, err := os.OpenFile(newLogFileName(pathToFile), os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
-	if err != nil {
-		panic(err)
-	}
-	l := NewWithWriter(f)
-	l.path = pathToFile
-	l.noHighlighting = true
-	return l
-}
-
-func (r *logger) SetRotateByDay() {
-	r.rotateByDay = true
 }
 
 func (r *logger) SetLevel(lv Level) {
@@ -125,36 +99,9 @@ func (r *logger) SetJson() {
 }
 
 func (r *logger) write(p []byte) {
-	r.chOut <- p
+	r.out.Write(p)
 }
 
-func (r *logger) handling() {
-	defer r.write([]byte("<<<logger dead>>>>:"))
-
-	tick := time.NewTicker(time.Second)
-	for {
-		select {
-		case <-tick.C:
-			if r.path != "" && r.rotateByDay {
-				if f, ok := r.out.(*os.File); ok {
-					var name = newLogFileName(r.path)
-					if f.Name() != name {
-						newOut, err := os.OpenFile(name, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0755)
-						if err != nil {
-							r.write([]byte("<<<logger error>>>>:" + err.Error()))
-						} else {
-							r.out = newOut
-							f.Close()
-						}
-					}
-				}
-			}
-
-		case data := <-r.chOut:
-			r.out.Write(data)
-		}
-	}
-}
 
 func (r *logger) doLog(lv, msg string) {
 	timeStr := time.Now().Format(timeFormat)
@@ -321,12 +268,4 @@ func SetLevelByName(lv string) {
 
 func SetNoColor() {
 	std.noHighlighting = true
-}
-
-func SetRotateByDay() {
-	std.SetRotateByDay()
-}
-
-func WriteToFile(pathToFile string) {
-	std = NewWithFile(pathToFile)
 }

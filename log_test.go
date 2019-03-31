@@ -1,20 +1,20 @@
 package log_test
 
 import (
+	"github.com/funtoy/log"
 	"testing"
-	"log"
 )
 
 func TestInit(t *testing.T) {
-	r := log.NewWithFile("./logs/platform/debug")
-	r.SetRotateByDay()
-	r.Debug("debug message.")
-	r.Debug("debug message.")
-	r.Info("info message.")
-	r.Info("info message.")
-	r.Warn("warn message.")
-	r.Warn("warn message.")
-	r.Error("error message.")
-	r.Error("error message.")
+	log.Debug("debug message.")
+	log.Debug("debug message.")
+	log.Info("info message.")
+	log.Info("info message.")
+	log.Warn("warn message.")
+	log.Warn("warn message.")
+	log.Error("error message.")
+	log.SetNoColor()
+	log.SetJson()
+	log.Error("error message.")
 
 }
