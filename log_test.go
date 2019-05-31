@@ -1,18 +1,15 @@
-package zapLog_test
+package log_test
 
 import (
-	"github.com/funtoy/zapLog"
+	"github.com/funtoy/log"
 	"testing"
 )
 
 func TestNewLogger(t *testing.T) {
-	zapLog.Debug("hello main Debug")
-	zapLog.Infof("hello main Info %v", "hehehe")
-	zapLog.Info("hello main Info2")
-	zapLog.Warn("Hi Gateway Im Debug")
-
-	//var a []int
-	zapLog.Errorf("Hi Gateway  Im Info")
-	zapLog.Info("Hi Gateway  Im Info")
+	log.Debug("this is a debug log")
+	log.Infof("this is a info log %v", "hehehe")
+	log.Info("this is a info log too")
+	log.Warn("this is a warn log")
+	log.Errorf("this is a error log")
 
 }
