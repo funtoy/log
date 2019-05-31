@@ -7,14 +7,6 @@ import (
 	"os"
 )
 
-type OutputTarget int
-
-const (
-	OutputToConsole        OutputTarget = 1
-	OutputToFile           OutputTarget = 2
-	OutputToConsoleAndFile OutputTarget = 3
-)
-
 /**
  * 获取日志
  * filePath 日志文件路径
@@ -24,7 +16,7 @@ const (
  * maxAge 文件最多保存多少天
  * json 是否json格式输出
  */
-func NewLogger(filePath string, level zapcore.Level, maxSize int, maxBackups int, maxAge int, json bool, out OutputTarget) *zap.SugaredLogger {
+func NewLogger(filePath string, level zapcore.Level, maxSize int, maxBackups int, maxAge int, json bool) *zap.SugaredLogger {
 	//日志文件路径配置2
 
 	var hook *lumberjack.Logger
@@ -71,16 +63,7 @@ func NewLogger(filePath string, level zapcore.Level, maxSize int, maxBackups int
 		writer = zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout))
 
 	} else {
-		switch out {
-		case OutputToConsole:
-			writer = zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout))
-
-		case OutputToFile:
-			writer = zapcore.NewMultiWriteSyncer(zapcore.AddSync(hook))
-
-		case OutputToConsoleAndFile:
-			writer = zapcore.NewMultiWriteSyncer(zapcore.AddSync(os.Stdout), zapcore.AddSync(hook))
-		}
+		writer = zapcore.NewMultiWriteSyncer(zapcore.AddSync(hook))
 	}
 
 	core := zapcore.NewCore(encoder, writer, atomicLevel)

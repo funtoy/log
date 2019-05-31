@@ -3,6 +3,7 @@ package log
 import (
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"strings"
 )
 
 const (
@@ -15,24 +16,39 @@ const (
 	FatalLevel  = zapcore.FatalLevel
 )
 
+func LevelStr(str string) zapcore.Level {
+	switch strings.ToLower(str) {
+	case "debug":
+		return DebugLevel
+	case "info":
+		return InfoLevel
+	case "warn":
+		return WarnLevel
+	case "error":
+		return ErrorLevel
+	case "Fatal":
+		return FatalLevel
+	}
+	return DebugLevel
+}
+
 type Config struct {
-	Filename   string       // 日志文件路径
-	Level      int8         // 日志等级
-	MaxSize    int          // 每个日志文件保存的最大尺寸 单位：M
-	MaxBackups int          // 日志文件最多保存多少个备份
-	MaxAge     int          // 文件最多保存多少天
-	Json       bool         // 是否json格式输出
-	Target     OutputTarget // 输出到哪里
+	Filename   string        // 日志文件路径
+	Level      zapcore.Level // 日志等级
+	MaxSize    int           // 每个日志文件保存的最大尺寸 单位：M
+	MaxBackups int           // 日志文件最多保存多少个备份
+	MaxAge     int           // 文件最多保存多少天
+	Json       bool          // 是否json格式输出
 }
 
 var std *zap.SugaredLogger
 
 func init() {
-	std = NewLogger("", zapcore.DebugLevel, 0, 0, 0, false, OutputToConsole)
+	std = NewLogger("", zapcore.DebugLevel, 0, 0, 0, false)
 }
 
 func Set(cfg *Config) {
-	std = NewLogger(cfg.Filename, zapcore.Level(cfg.Level), cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge, cfg.Json, cfg.Target)
+	std = NewLogger(cfg.Filename, zapcore.Level(cfg.Level), cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge, cfg.Json)
 }
 
 func Debug(val ...interface{}) {
