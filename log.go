@@ -48,7 +48,7 @@ func init() {
 }
 
 func Set(cfg *Config) {
-	std = NewLogger(cfg.Filename, zapcore.Level(cfg.Level), cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge, cfg.Json)
+	std = NewLogger(cfg.Filename, cfg.Level, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge, cfg.Json)
 }
 
 func Debug(val ...interface{}) {
