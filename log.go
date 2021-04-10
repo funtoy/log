@@ -51,42 +51,22 @@ func Set(cfg *Config) {
 	std = NewLogger(cfg.Filename, cfg.Level, cfg.MaxSize, cfg.MaxBackups, cfg.MaxAge, cfg.Json)
 }
 
-func Debug(val ...interface{}) {
-	std.Debug(val...)
-}
-
-func Info(val ...interface{}) {
-	std.Info(val...)
-}
-
-func Warn(val ...interface{}) {
-	std.Warn(val...)
-}
-
-func Error(val ...interface{}) {
-	std.Error(val...)
-}
-
-func Fatal(val ...interface{}) {
-	std.Fatal(val...)
-}
-
-func Debugf(format string, val ...interface{}) {
+func Debug(format string, val ...interface{}) {
 	std.Debugf(format, val...)
 }
 
-func Infof(format string, val ...interface{}) {
+func Info(format string, val ...interface{}) {
 	std.Infof(format, val...)
 }
 
-func Warnf(format string, val ...interface{}) {
+func Warn(format string, val ...interface{}) {
 	std.Warnf(format, val...)
 }
 
-func Errorf(format string, val ...interface{}) {
+func Error(format string, val ...interface{}) {
 	std.Errorf(format, val...)
 }
 
-func Fatalf(format string, val ...interface{}) {
+func Fatal(format string, val ...interface{}) {
 	std.Fatalf(format, val...)
 }
